@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import Form from "./Form";
-import Result from "./Result";
+import Form from "../form/Form";
+import Result from "../result/Result";
 import './App.css';
 
 //Klucz do API
