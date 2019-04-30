@@ -1,9 +1,9 @@
 const http = require('http')
 const server = http.createServer()
 const io = require('socket.io')(server)
-const User = require('../models/User')
-const { createRoom, deleteRoom, joinRoom, leaveRoom } = require('./roomHandler')
-const {handleMessage} = require ("./messageHandler")
+const User = require('./models/User')
+const { createRoom, deleteRoom, joinRoom, leaveRoom } = require('./handlers/roomHandler')
+const {handleMessage} = require ("./handlers/messageHandler")
 
 const allUsers = []
 const allRooms = []

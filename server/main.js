@@ -1,6 +1,6 @@
 const dns = require('dns')
 const os = require('os')
-const chat = require('./chat/chat')
+const chat = require('./chat')
 
 const port = process.env.PORT || 8080
 
