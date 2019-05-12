@@ -18,10 +18,9 @@ class ContactList extends Component {
     }
 
     render() {
-        const contactItems = []
-        for(let i = 0 ; i< this.state.allUsers.length ; i++){
-            contactItems.push(<ContactItem key={i} nick={this.state.allUsers[i]} />)
-        }
+        const contactItems = this.state.allUsers.map((user, index) => {
+            return <ContactItem  nick={user} key={index}/>
+        })
         return (
             <div>
                 <h1 className="list-title"> Contact List</h1>

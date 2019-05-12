@@ -24,9 +24,9 @@ class App extends Component {
   }
 
   render() {
-    let contactList 
-    if(this.state.socket){
-      contactList = <ContactList/>
+    let contactList
+    if (this.state.socket) {
+      contactList = <ContactList />
     }
 
     return (
