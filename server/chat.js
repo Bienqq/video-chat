@@ -3,31 +3,31 @@ const server = http.createServer()
 const io = require('socket.io')(server)
 const User = require('./models/User')
 const { createRoom, deleteRoom, joinRoom, leaveRoom } = require('./handlers/roomHandler')
-const {handleMessage} = require ("./handlers/messageHandler")
+const { handleMessage, notifyUser } = require("./handlers/messageHandler")
 
 const allUsers = []
 const allRooms = []
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
 
 	const connectedUserNick = socket.request._query.nick
 	console.log(`User ${connectedUserNick} connected chat!`)
 	allUsers.push(new User(connectedUserNick, socket))
 
-	socket.on("createRoom", (roomName, callback) => {
-		callback((createRoom(roomName, allRooms)))
+	socket.on("createRoom", roomName => {
+		createRoom(roomName, allRooms)
 	})
 
-	socket.on("deleteRoom", (roomName, callback) => {
-		callback(deleteRoom(roomName, allRooms))
+	socket.on("deleteRoom", roomName => {
+		deleteRoom(roomName, allRooms)
 	})
 
-	socket.on("joinRoom", (roomName, callback) => {
-		callback(joinRoom(socket, roomName, allRooms))
+	socket.on("joinRoom", roomName => {
+		joinRoom(socket, roomName, allRooms)
 	})
 
-	socket.on("leaveRoom", (roomName, callback) => {
-		callback(leaveRoom(socket, roomName))
+	socket.on("leaveRoom", roomName => {
+		leaveRoom(socket, roomName)
 	})
 
 	socket.on('message', (message) => {
@@ -39,6 +39,13 @@ io.on('connection', (socket) => {
 		console.log(`User ${userNick} leave chat!`)
 		// removing leaving user from all users
 		allUsers.splice(allUsers.indexOf(socket), 1)
+	})
+
+	socket.on('sendNotification', data => {
+		const { roomName, nick } = data
+		const { nick: notifierUserNick } = allUsers.find(user => user.socket === socket)
+		const { socket: socketToNotify } = allUsers.find(user => user.nick === nick)
+		notifyUser(notifierUserNick, roomName, socketToNotify)
 	})
 
 })

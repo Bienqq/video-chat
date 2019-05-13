@@ -17,9 +17,13 @@ class ContactList extends Component {
         })
     }
 
+    onItemClicked = (user) => {
+        this.props.userToChat(user) 
+    }
+
     render() {
         const contactItems = this.state.allUsers.map((user, index) => {
-            return <ContactItem  nick={user} key={index}/>
+            return <ContactItem nick={user} key={index} onClick={() => this.onItemClicked(user)}/>
         })
         return (
             <div>
@@ -29,6 +33,7 @@ class ContactList extends Component {
         )
     }
 }
+
 
 const ContactListWithSocket = props => (
     <SocketContext.Consumer>
