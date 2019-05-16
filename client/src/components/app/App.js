@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 
 import * as io from 'socket.io-client'
-
 import './App.css'
-
 import SocketContext from '../../config/socketContext'
 import ChatBox from '../chatbox/ChatBox'
 import ContactList from '../contacts/ContactList'
 import WelcomeDialog from '../widgets/WelcomeDialog'
+import Swal from 'sweetalert2'
 
 class App extends Component {
 
@@ -24,7 +23,25 @@ class App extends Component {
       socket: io(process.env.REACT_APP_SERVER_URL, { query: `nick=${nick}` })
     }, () => {
       this.state.socket.on(process.env.REACT_APP_NOTIFY_USER_EVENT, ({ notifierUserNick, roomName }) => {
-        alert(`User ${notifierUserNick} wants to chat with You on room ${roomName}`)
+        
+        Swal.fire({
+          title: 'Want to chat?',
+          text: 'User ' + notifierUserNick + ' wants to chat with You on room ' + roomName + ' !',
+          type: 'success',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Chat'
+        }).then((result) => {
+          if (result.value) {
+            Swal.fire(
+              'You can chat now!',
+              'Good luck :)',
+              'success'
+            )
+          }
+        })
+
       })
     })
   }
