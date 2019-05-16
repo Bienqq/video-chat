@@ -1,23 +1,25 @@
-import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import React, { Component } from 'react'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import { connect } from 'react-redux'
+import { provideNick } from '../../config/actions'
 
 class WelcomeDialog extends Component {
-  
+
     state = {
         open: true,
         nick: '',
-    };
+    }
 
-    buttonClicked = () => {
-        this.setState({ open: false });
+    nickButtonClicked = () => {
+        this.setState({ open: false })
         this.props.nick(this.state.nick)
-    };
+    }
 
     handleChange = (event) => {
         this.setState({ nick: event.target.value })
@@ -46,11 +48,17 @@ class WelcomeDialog extends Component {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.buttonClicked} color="primary">Enter Chat</Button>
+                    <Button onClick={this.nickButtonClicked} color="primary">Enter Chat</Button>
                 </DialogActions>
             </Dialog>
-        );
+        )
     }
 }
 
-export default WelcomeDialog
+const mapDispatchToProps = (dispatch) => {
+    return {
+        nickButtonClicked: (nick) => dispatch(provideNick(nick)) 
+    }
+}
+
+export default connect(null, mapDispatchToProps)(WelcomeDialog)

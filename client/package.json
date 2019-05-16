@@ -15,6 +15,7 @@
     "react-notifications-component": "^1.1.1",
     "react-redux": "^7.0.3",
     "react-scripts": "3.0.0",
+    "redux": "^4.0.1",
     "socket.io-client": "^2.2.0",
     "sweetalert": "^2.1.2",
     "sweetalert2": "^8.10.7",
