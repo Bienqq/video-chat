@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.9.3",
+    "@material/react-card": "^0.12.1",
     "gh-pages": "^2.0.1",
     "react": "^16.8.6",
     "react-alert": "^5.5.0",
