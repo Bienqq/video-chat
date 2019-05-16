@@ -48,7 +48,12 @@ class App extends Component {
 
   selectUserToChat = (userToChat) => {
     if (this.state.userNick === userToChat) {
-      alert("You cannot chat with Yourself !")
+      Swal.fire({
+        type: 'error',
+        title: 'Oops...',
+        text: 'You cannot chat with Yourself !',
+        footer: 'Are you silly? xd'
+      })
     } else {
       this.setState({ userToChat: userToChat })
     }
