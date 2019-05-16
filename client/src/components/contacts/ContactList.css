@@ -9,11 +9,7 @@
     transition: 0.3s;
     background-color: #f2f2f2; 
 
-    /* background-image: src="../../assets/images/main_background.jpg"; */
-
-    position: fixed; /* or absolute */
-    /*top: 10%;
-    left: 15%;*/
+    position: fixed; 
     margin-left: 15%;
     margin-right: 15%;
     margin-top: 5%;
@@ -26,7 +22,6 @@
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   }
   
-  /* Add some padding inside the card container */
   .container {
     padding: 2px 16px;
   }
