@@ -26,14 +26,15 @@ class ContactList extends Component {
             return <ContactItem nick={user} key={index} onClick={() => this.onItemClicked(user)}/>
         })
         return (
-            <div>
+            <div class="card">
+                <div class="container">
                 <h1 className="list-title"> Contact List</h1>
-                {contactItems}
+                    {contactItems}
+                </div>
             </div>
         )
     }
 }
-
 
 const ContactListWithSocket = props => (
     <SocketContext.Consumer>
