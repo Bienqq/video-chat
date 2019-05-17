@@ -55,9 +55,9 @@ class WelcomeDialog extends Component {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
     return {
-        nickButtonClicked: (nick) => dispatch(provideNick(nick)) 
+        nickButtonClicked: nick => dispatch(provideNick(nick)) 
     }
 }
 
