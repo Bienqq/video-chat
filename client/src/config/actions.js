@@ -1,6 +1,10 @@
+import { PROVIDE_NICK } from '../constants/actionTypes'
+
 export const provideNick = (nick) => {
     return {
-        nick,
-        type: 'PROVIDE_NICK',
+        type: PROVIDE_NICK,
+        payload: {
+            userNick: nick,
+        }
     }
 }

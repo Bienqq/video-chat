@@ -1,16 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
 import App from './components/app/App'
 import * as serviceWorker from './serviceWorker'
-import chatReducer from './reducers/chatReducer'
+import store from './store'
 
 import './index.css'
 import 'typeface-roboto'
 
-const store = createStore(chatReducer, composeWithDevTools())
 
 ReactDOM.render(
     <Provider store={store}>
