@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Widget as ChatWidget, addResponseMessage } from 'react-chat-widget';
+import { connect } from 'react-redux'
+
 import SocketContext from '../../config/socketContext'
 
 import "./ChatBox.css"
@@ -45,4 +47,10 @@ const ChatBoxWithSocket = props => (
   </SocketContext.Consumer>
 )
 
-export default ChatBoxWithSocket;
+const mapStateToProps = state => {
+    return {
+      userToChat: state.userToChat
+    }
+}
+
+export default connect(mapStateToProps)(ChatBoxWithSocket)

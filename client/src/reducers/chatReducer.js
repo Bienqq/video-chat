@@ -1,8 +1,9 @@
-import { PROVIDE_NICK } from '../constants/actionTypes'
+import { PROVIDE_NICK, USER_TO_CHAT_SELECTED, UPDATE_ALL_USERS_ONLINE } from '../constants/actionTypes'
 
 const initState = {
     userNick: '',
-    usersOnline: [],
+    userToChat: '',
+    allUsersOnline: [],
 }
 
 const chatReducer = (state = initState, { type, payload }) => {
@@ -11,6 +12,16 @@ const chatReducer = (state = initState, { type, payload }) => {
             return {
                 ...state,
                 userNick: payload.userNick
+            }
+        case USER_TO_CHAT_SELECTED:
+            return {
+                ...state,
+                userToChat: payload.userToChat
+            }
+        case UPDATE_ALL_USERS_ONLINE:
+            return {
+                ...state,
+                allUsersOnline: payload.allUsersOnline
             }
         default:
             return state

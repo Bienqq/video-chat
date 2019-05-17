@@ -18,7 +18,7 @@ class WelcomeDialog extends Component {
 
     buttonClicked = () => {
         this.setState({ open: false })
-        this.props.saveNickInStore(this.state.nick)
+        this.props.onNickProvided(this.state.nick)
     }
 
     handleChange = (event) => {
@@ -57,7 +57,7 @@ class WelcomeDialog extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        saveNickInStore: nick => dispatch(provideNick(nick)) 
+        onNickProvided: nick => dispatch(provideNick(nick)) 
     }
 }
 
