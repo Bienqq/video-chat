@@ -26,7 +26,7 @@ class ContactList extends Component {
 
     render() {
         const contactItems = this.state.allUsersOnline.map((user, index) => {
-            return <ContactItem nick={user} key={index} onClick={() => this.onItemClicked(user)} />
+            return <ContactItem nick={user} key={index} onItemClicked={() => this.onItemClicked(user)} />
         })
         return (
             <div className="card">
