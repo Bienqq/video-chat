@@ -1,4 +1,9 @@
-import { PROVIDE_NICK, USER_TO_CHAT_SELECTED, UPDATE_ALL_USERS_ONLINE } from '../constants/actionTypes'
+import {
+    PROVIDE_NICK,
+    USER_TO_CHAT_SELECTED,
+    UPDATE_ALL_USERS_ONLINE,
+    JOIN_ROOM
+} from '../constants/actionTypes'
 
 export const provideNick = nick => {
     return {
@@ -23,6 +28,15 @@ export const updateAllUsersOnline = allUsersOnline => {
         type: UPDATE_ALL_USERS_ONLINE,
         payload: {
             allUsersOnline: allUsersOnline
+        }
+    }
+}
+
+export const joinRoom = roomName => {
+    return {
+        type: JOIN_ROOM,
+        payload: {
+            roomName: roomName
         }
     }
 }

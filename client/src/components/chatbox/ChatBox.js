@@ -13,21 +13,11 @@ import logo from '../../assets/images/logo.svg'
 class ChatBox extends Component {
 
   componentDidMount() {
-    const roomName = Math.random().toString(36).substring(7)
-    const data = {
-      roomName,
-      nick: this.props.userToChat
-    }
-    this.props.socket.emit(process.env.REACT_APP_CREATE_ROOM_EVENT, roomName)
-    this.props.socket.emit(process.env.REACT_APP_JOIN_ROOM_EVENT, roomName)
-    this.props.socket.emit(process.env.REACT_APP_NOTIFY_USER_EVENT, data)
-    addResponseMessage("Welcome to this awesome chat!");
+    this.props.socket.on(process.env.REACT_APP_MESSAGE_EVENT, newMessage => addResponseMessage(newMessage))
   }
 
-  handleNewUserMessage = (newMessage) => {
-    console.log(`New message incoming! ${newMessage}`);
-    // Now send the message throught the backend API
-    //addResponseMessage(response);
+  handleNewUserMessage = newMessage => {
+    this.props.socket.emit(process.env.REACT_APP_MESSAGE_EVENT, newMessage)
   }
 
   render() {

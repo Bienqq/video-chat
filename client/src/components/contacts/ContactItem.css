@@ -31,3 +31,7 @@
 .info>span {
     display: block;
 }
+
+.user-nick {
+    color: rgb(127, 255, 176);
+}

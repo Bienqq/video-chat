@@ -30,8 +30,8 @@ io.on('connection', socket => {
 		leaveRoom(socket, roomName)
 	})
 
-	socket.on('message', (message) => {
-		handleMessage(io, socket, message)
+	socket.on('message', message => {
+		handleMessage(socket, message)
 	})
 
 	socket.on('disconnect', () => {

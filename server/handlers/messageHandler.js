@@ -1,6 +1,6 @@
-exports.handleMessage = (io, socket, message) => {
+exports.handleMessage = (socket, message) => {
     const room = socket.rooms[Object.keys(socket.rooms)[1]]
-    io.in(room).emit('message', message)
+    socket.broadcast.to(room).emit('message', message)   
 }
 
 exports.notifyUser = (notifierUserNick, roomName, socketToNotify) => {
