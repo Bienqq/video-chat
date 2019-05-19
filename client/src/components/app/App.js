@@ -82,8 +82,8 @@ class App extends Component {
     return (
       //We are using one global socket instance by SocketContext
       <SocketContext.Provider value={this.state.socket}>
-        {messageBox}
         {contactList}
+        {messageBox}
         <WelcomeDialog />
       </SocketContext.Provider>
     )

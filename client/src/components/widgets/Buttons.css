@@ -1,0 +1,7 @@
+.buttons{
+    position: fixed;
+    right: 10vw;
+    bottom: 20px;
+    background-color: white;
+    z-index: 1000;
+}

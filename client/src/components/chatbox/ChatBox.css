@@ -1,3 +1,7 @@
 .rcw-launcher, .rcw-send {
     cursor: pointer;
 }
+
+.hide {
+    visibility: hidden;
+}

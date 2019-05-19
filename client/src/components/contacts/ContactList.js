@@ -12,7 +12,7 @@ class ContactList extends Component {
         allUsersOnline: []
     }
 
-    // in this way we can access global instance of socket
+    // in this way we can access global instance of socketChod
     componentDidMount() {
         this.props.socket.on(process.env.REACT_APP_ALL_USERS_EVENT, allUsersOnline => {
             this.setState({ allUsersOnline: allUsersOnline })
