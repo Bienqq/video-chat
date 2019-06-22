@@ -38,8 +38,11 @@ class ChatBox extends Component {
           const source = context.createBufferSource();
           source.buffer = buffer;
           source.connect(context.destination);
+          console.log("will start playing")
           source.start(0);
+          console.log("playing")
         });
+
         break
       case 'video':
         break
