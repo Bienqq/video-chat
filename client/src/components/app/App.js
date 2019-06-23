@@ -7,7 +7,6 @@ import WelcomeDialog from '../widgets/WelcomeDialog'
 import Swal from 'sweetalert2'
 import { connect } from 'react-redux'
 import { userToChatSelected, joinRoom } from '../../actions/actions'
-
 import './App.css'
 
 class App extends Component {
@@ -22,8 +21,20 @@ class App extends Component {
         socket: io(process.env.REACT_APP_SERVER_URL, { query: `nick=${userNick}` })
       }, () => {
         this.state.socket.on(process.env.REACT_APP_NOTIFY_USER_EVENT, ({ notifierUserNick, roomName }) => this.showNotification(notifierUserNick, roomName))
+        this.state.socket.on(process.env.REACT_APP_INVITATION_ANSWER_EVENT, ({ user, invitationAccepted }) => this.showNotificationAnswer(user, invitationAccepted))
+
       })
     }
+  }
+
+  showNotificationAnswer = (user, invitationAccepted) => {
+    Swal.fire({
+      title: invitationAccepted ? "Invitation accepted!" : "Invitation rejected!",
+      text: `User ${user} ${invitationAccepted ? 'accepted' : 'rejected'} Your invitation`,
+      type: invitationAccepted ? 'success' : 'error',
+      showCancelButton: false,
+      confirmButtonText: 'OK'
+    })
   }
 
   showNotification = (notifierUserNick, roomName) => {
@@ -37,9 +48,15 @@ class App extends Component {
       confirmButtonText: 'Chat'
     }).then(result => {
       if (result.value) {
+        //accepting invitation
         this.props.onUserToChatSelected(notifierUserNick)
         this.props.onJoinRoom(roomName)
         this.state.socket.emit(process.env.REACT_APP_JOIN_ROOM_EVENT, roomName)
+        this.state.socket.emit(process.env.REACT_APP_INVITATION_ANSWER_EVENT, {userToAnswer: notifierUserNick, user: this.props.userNick, invitationAccepted: true })
+
+      } else {
+        //rejecting invitation
+        this.state.socket.emit(process.env.REACT_APP_INVITATION_ANSWER_EVENT, {userToAnswer: notifierUserNick, user: this.props.userNick, invitationAccepted: false })
       }
     })
   }

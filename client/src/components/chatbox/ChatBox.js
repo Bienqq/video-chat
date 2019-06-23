@@ -14,13 +14,16 @@ import logo from '../../assets/images/logo.svg'
 
 class ChatBox extends Component {
 
+  constructor(props) {
+    super(props)
+    this.localVideoRef = React.createRef()
+  }
+
   state = {
     recordVoice: false,
-    audioContext: null,
   }
 
   componentDidMount() {
-    this.setState({ audioContext: new AudioContext() })
     this.props.socket.on(process.env.REACT_APP_MESSAGE_EVENT, message => this.handleIncomingMessage(message))
   }
 
@@ -30,19 +33,6 @@ class ChatBox extends Component {
         addResponseMessage(data)
         break
       case 'audio':
-        console.log(data)
-        const context = this.state.audioContext
-        const arrayBuffer = new ArrayBuffer(data.length)
-
-        context.decodeAudioData(arrayBuffer,  (buffer) => {
-          const source = context.createBufferSource();
-          source.buffer = buffer;
-          source.connect(context.destination);
-          console.log("will start playing")
-          source.start(0);
-          console.log("playing")
-        });
-
         break
       case 'video':
         break
@@ -60,10 +50,18 @@ class ChatBox extends Component {
   }
 
   handleVoice = voiceBlob => {
-    if(voiceBlob.length !== 0){
-      console.log(voiceBlob)
+    if (voiceBlob.length !== 0) {
       this.props.socket.emit(process.env.REACT_APP_MESSAGE_EVENT, { type: 'audio', data: voiceBlob })
     }
+  }
+
+  callPeer() {
+    navigator.getUserMedia({ video: true, audio: true }, stream => {
+      //playing local video
+      this.localVideoRef.srcObject = stream
+      this.localVideoRef.play()
+    },
+      err => console.error(err))
   }
 
 
@@ -76,12 +74,14 @@ class ChatBox extends Component {
           subtitle={`Chatting with user ${userToChat} on room ${roomName}`}
           profileAvatar={logo}
         />
+
         <ReactMic
           record={this.state.recordVoice}
           onData={this.handleVoice}
           audioBitsPerSecond={128000}
         />
         <Buttons onTalkButtonClicked={this.handleTalkButton} />
+        <video ref={localVideoRef => { this.localVideoRef = localVideoRef }} muted />
       </div>
     )
   }
@@ -96,7 +96,8 @@ const ChatBoxWithSocket = props => (
 const mapStateToProps = state => {
   return {
     userToChat: state.userToChat,
-    roomName: state.roomName
+    roomName: state.roomName,
+    userNick: state.userNick
   }
 }
 

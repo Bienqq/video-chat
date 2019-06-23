@@ -3,7 +3,7 @@ const server = http.createServer()
 const io = require('socket.io')(server)
 const User = require('./models/User')
 const { createRoom, deleteRoom, joinRoom, leaveRoom } = require('./handlers/roomHandler')
-const { handleMessage, notifyUser } = require("./handlers/messageHandler")
+const { notifyUser, invitationAnswer } = require("./handlers/messageHandler")
 
 const allUsers = []
 const allRooms = []
@@ -30,10 +30,6 @@ io.on('connection', socket => {
 		leaveRoom(socket, roomName)
 	})
 
-	socket.on('message', message => {
-		handleMessage(socket, message)
-	})
-
 	socket.on('disconnect', () => {
 		const userNick = socket.request._query.nick
 		console.log(`User ${userNick} leave chat!`)
@@ -46,6 +42,12 @@ io.on('connection', socket => {
 		const { nick: notifierUserNick } = allUsers.find(user => user.socket === socket)
 		const { socket: socketToNotify } = allUsers.find(user => user.nick === nick)
 		notifyUser(notifierUserNick, roomName, socketToNotify)
+	})
+
+	socket.on('invitationAnswer', data => {
+		const { userToAnswer, user, invitationAccepted } = data
+		const { socket } = allUsers.find(user => user.nick === userToAnswer)
+		invitationAnswer(user, invitationAccepted, socket)
 	})
 
 })
