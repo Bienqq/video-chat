@@ -1,15 +1,24 @@
 import {
-    PROVIDE_NICK,
     USER_TO_CHAT_SELECTED,
     UPDATE_ALL_USERS_ONLINE,
-    JOIN_ROOM
+    NICK_PROVIDED,
+    CONNECT_SOCKET,
 } from '../constants/actionTypes'
 
-export const provideNick = nick => {
+export const connectSocket = socket => {
     return {
-        type: PROVIDE_NICK,
+        type: CONNECT_SOCKET,
         payload: {
-            userNick: nick,
+            socket
+        }
+    }
+}
+
+export const nickProvided = nick => {
+    return {
+        type: NICK_PROVIDED,
+        payload: {
+            userNick: nick
         }
     }
 }
@@ -28,15 +37,6 @@ export const updateAllUsersOnline = allUsersOnline => {
         type: UPDATE_ALL_USERS_ONLINE,
         payload: {
             allUsersOnline: allUsersOnline
-        }
-    }
-}
-
-export const joinRoom = roomName => {
-    return {
-        type: JOIN_ROOM,
-        payload: {
-            roomName: roomName
         }
     }
 }

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import ContactItem from './ContactItem'
-import SocketContext from '../../config/socketContext'
 import { connect } from 'react-redux'
 import { updateAllUsersOnline } from '../../actions/actions'
+import { ALL_USERS_ONLINE } from '../../constants/eventTypes'
 
 import './ContactList.css'
 
@@ -12,9 +12,8 @@ class ContactList extends Component {
         allUsersOnline: []
     }
 
-    // in this way we can access global instance of socketChod
     componentDidMount() {
-        this.props.socket.on(process.env.REACT_APP_ALL_USERS_EVENT, allUsersOnline => {
+        this.props.socket.on(ALL_USERS_ONLINE, allUsersOnline => {
             this.setState({ allUsersOnline: allUsersOnline })
             this.props.onAllUsersUpdated(allUsersOnline)
         })
@@ -39,16 +38,10 @@ class ContactList extends Component {
     }
 }
 
-const ContactListWithSocket = props => (
-    <SocketContext.Consumer>
-        {socket => < ContactList {...props} socket={socket} />}
-    </SocketContext.Consumer>
-)
-
 const mapDispatchToProps = dispatch => {
     return {
         onAllUsersUpdated: allUsersOnline => dispatch(updateAllUsersOnline(allUsersOnline))
     }
 }
 
-export default connect(null, mapDispatchToProps)(ContactListWithSocket)
+export default connect(null, mapDispatchToProps)(ContactList)

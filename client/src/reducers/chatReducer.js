@@ -1,23 +1,23 @@
 import {
-    PROVIDE_NICK,
     USER_TO_CHAT_SELECTED,
     UPDATE_ALL_USERS_ONLINE,
-    JOIN_ROOM,
+    NICK_PROVIDED,
+    CONNECT_SOCKET,
 } from '../constants/actionTypes'
 
 const initState = {
-    userNick: '',
+    socket: null,
     userToChat: '',
-    roomName: '',
+    userNick: '',
     allUsersOnline: [],
 }
 
 const chatReducer = (state = initState, { type, payload }) => {
     switch (type) {
-        case PROVIDE_NICK:
+        case CONNECT_SOCKET:
             return {
                 ...state,
-                userNick: payload.userNick
+                socket: payload.socket
             }
         case USER_TO_CHAT_SELECTED:
             return {
@@ -29,10 +29,10 @@ const chatReducer = (state = initState, { type, payload }) => {
                 ...state,
                 allUsersOnline: payload.allUsersOnline
             }
-        case JOIN_ROOM:
+        case NICK_PROVIDED:
             return {
                 ...state,
-                roomName: payload.roomName
+                userNick: payload.userNick
             }
         default:
             return state

@@ -1,46 +1,52 @@
 import React, { Component } from 'react'
 import * as io from 'socket.io-client'
-import SocketContext from '../../config/socketContext'
 import ChatBox from '../chatbox/ChatBox'
 import ContactList from '../contacts/ContactList'
 import WelcomeDialog from '../widgets/WelcomeDialog'
 import Swal from 'sweetalert2'
 import { connect } from 'react-redux'
-import { userToChatSelected, joinRoom } from '../../actions/actions'
+import { connectSocket, userToChatSelected } from '../../actions/actions'
+import { INVITE_USER_TO_CHAT, START_PEER_CONNECTION } from '../../constants/eventTypes'
 import './App.css'
 
 class App extends Component {
 
   state = {
-    socket: null,
+    showChatBox: false,
+    role: ''
   }
 
-  componentWillReceiveProps({ userNick }) {
-    if (userNick && !this.state.socket) {
-      this.setState({
-        socket: io(process.env.REACT_APP_SERVER_URL, { query: `nick=${userNick}` })
-      }, () => {
-        this.state.socket.on(process.env.REACT_APP_NOTIFY_USER_EVENT, ({ notifierUserNick, roomName }) => this.showNotification(notifierUserNick, roomName))
-        this.state.socket.on(process.env.REACT_APP_INVITATION_ANSWER_EVENT, ({ user, invitationAccepted }) => this.showNotificationAnswer(user, invitationAccepted))
-
+  componentWillReceiveProps({ userNick, socket }) {
+    if (userNick && !socket) {
+      // contect to socket server
+      this.props.onSocketConnected(io(process.env.REACT_APP_BROKER_URL, { query: `nick=${userNick}` }))
+    }
+    if (socket) {
+      // listen to any invitation from other users
+      socket.on(INVITE_USER_TO_CHAT, (notifierUser, answerCallbackFn) => {
+        this.handleInvitationAlert(notifierUser, answerCallbackFn)
       })
     }
   }
 
-  showNotificationAnswer = (user, invitationAccepted) => {
+  handleInvitationAnswer = (userToChat, invitationAnswer) => {
     Swal.fire({
-      title: invitationAccepted ? "Invitation accepted!" : "Invitation rejected!",
-      text: `User ${user} ${invitationAccepted ? 'accepted' : 'rejected'} Your invitation`,
-      type: invitationAccepted ? 'success' : 'error',
+      title: invitationAnswer ? "Invitation accepted!" : "Invitation rejected!",
+      text: `User ${userToChat} ${invitationAnswer ? 'accepted' : 'rejected'} Your invitation`,
+      type: invitationAnswer ? 'success' : 'error',
       showCancelButton: false,
       confirmButtonText: 'OK'
+    }).then(() => {
+      this.setState({ showChatBox: true, role: 'sender' })
+      this.props.onUserToChatSelected(userToChat)
+      this.props.socket.emit(START_PEER_CONNECTION, userToChat)
     })
   }
 
-  showNotification = (notifierUserNick, roomName) => {
+  handleInvitationAlert = (notifierUser, answerCallbackFn) => {
     Swal.fire({
       title: 'Want to chat?',
-      text: `User ${notifierUserNick} wants to chat with You on room ${roomName} !`,
+      text: `User ${notifierUser} wants to chat with You !`,
       type: 'success',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -48,16 +54,10 @@ class App extends Component {
       confirmButtonText: 'Chat'
     }).then(result => {
       if (result.value) {
-        //accepting invitation
-        this.props.onUserToChatSelected(notifierUserNick)
-        this.props.onJoinRoom(roomName)
-        this.state.socket.emit(process.env.REACT_APP_JOIN_ROOM_EVENT, roomName)
-        this.state.socket.emit(process.env.REACT_APP_INVITATION_ANSWER_EVENT, {userToAnswer: notifierUserNick, user: this.props.userNick, invitationAccepted: true })
-
-      } else {
-        //rejecting invitation
-        this.state.socket.emit(process.env.REACT_APP_INVITATION_ANSWER_EVENT, {userToAnswer: notifierUserNick, user: this.props.userNick, invitationAccepted: false })
+        this.setState({ showChatBox: true, role: 'receiver' })
+        this.props.onUserToChatSelected(notifierUser)
       }
+      answerCallbackFn(result.value)
     })
   }
 
@@ -75,34 +75,26 @@ class App extends Component {
   }
 
   inviteUserToChat = userToChat => {
-    const roomName = Math.random().toString(36).substring(7)
-    this.props.onUserToChatSelected(userToChat)
-    this.props.onJoinRoom(roomName)
-    const data = {
-      roomName,
-      nick: userToChat
-    }
-    this.state.socket.emit(process.env.REACT_APP_CREATE_ROOM_EVENT, roomName)
-    this.state.socket.emit(process.env.REACT_APP_JOIN_ROOM_EVENT, roomName)
-    this.state.socket.emit(process.env.REACT_APP_NOTIFY_USER_EVENT, data)
+    this.props.socket.emit(INVITE_USER_TO_CHAT, userToChat, answer => {
+      this.handleInvitationAnswer(userToChat, answer)
+    })
   }
 
   render() {
     let contactList, messageBox
-    if (this.state.socket) {
-      contactList = <ContactList userSelected={this.handleUserToChatSelected} />
+    if (this.props.socket) {
+      contactList = <ContactList socket={this.props.socket} userSelected={this.handleUserToChatSelected} />
     }
-    if (this.props.userToChat) {
-      messageBox = <ChatBox />
+    if (this.state.showChatBox) {
+      messageBox = <ChatBox role={this.state.role}/>
     }
 
     return (
-      //We are using one global socket instance by SocketContext
-      <SocketContext.Provider value={this.state.socket}>
+      <div>
         {contactList}
         {messageBox}
         <WelcomeDialog />
-      </SocketContext.Provider>
+      </div>
     )
   }
 }
@@ -110,13 +102,14 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     userNick: state.userNick,
-    userToChat: state.userToChat
+    socket: state.socket
   }
 }
+
 const mapDispatchToProps = dispatch => {
   return {
-    onUserToChatSelected: userToChat => dispatch(userToChatSelected(userToChat)),
-    onJoinRoom: roomName => dispatch(joinRoom(roomName))
+    onSocketConnected: socket => dispatch(connectSocket(socket)),
+    onUserToChatSelected: userToChat => dispatch(userToChatSelected(userToChat))
   }
 }
 

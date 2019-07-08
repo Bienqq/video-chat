@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Widget as ChatWidget, addResponseMessage } from 'react-chat-widget'
 import { connect } from 'react-redux'
+import Peer from 'peerjs'
+import { START_PEER_CONNECTION } from '../../constants/eventTypes'
 
-import SocketContext from '../../config/socketContext'
 import Buttons from '../widgets/Buttons'
-import { ReactMic } from 'react-mic';
+import { ReactMic } from 'react-mic'
 
 import "./ChatBox.css"
 import 'react-chat-widget/lib/styles.css'
@@ -17,61 +18,68 @@ class ChatBox extends Component {
   constructor(props) {
     super(props)
     this.localVideoRef = React.createRef()
+    this.state.peer = new Peer(this.props.userNick, {
+      host: process.env.REACT_APP_PEERJS_HOST,
+      port: process.env.REACT_APP_PEERJS_PORT,
+      path: process.env.REACT_APP_PEERJS_PATH,
+      debug: 1,
+      secure: false
+    })
   }
 
   state = {
     recordVoice: false,
+    connection: null,
+    peer: null
+  }
+
+  componentWillReceiveProps({ userToChat, role, socket }) {
+    //user who accept invitation is a receiver and wait for connection
+    if (role === 'receiver') {
+      socket.on(START_PEER_CONNECTION, () => {
+        this.state.peer.on('connection', peerConnection => {
+          peerConnection.on('data', this.handleIncomingMessage)
+          this.setState({ connection: peerConnection })
+        })
+      })
+    } else {
+      this.setState({ connection: this.state.peer.connect(userToChat) }, () => {
+        const connection = this.state.connection
+        connection.on('data', this.handleIncomingMessage)
+      })
+    }
   }
 
   componentDidMount() {
-    this.props.socket.on(process.env.REACT_APP_MESSAGE_EVENT, message => this.handleIncomingMessage(message))
   }
 
-  handleIncomingMessage = ({ type, data }) => {
-    switch (type) {
-      case 'text':
-        addResponseMessage(data)
-        break
-      case 'audio':
-        break
-      case 'video':
-        break
-      default:
-        return
-    }
+  handleIncomingMessage = message => {
+    addResponseMessage(message)
   }
 
   handleNewUserMessage = newMessage => {
-    this.props.socket.emit(process.env.REACT_APP_MESSAGE_EVENT, { type: 'text', data: newMessage })
-  }
-
-  handleTalkButton = () => {
-    this.setState({ recordVoice: true })
-  }
-
-  handleVoice = voiceBlob => {
-    if (voiceBlob.length !== 0) {
-      this.props.socket.emit(process.env.REACT_APP_MESSAGE_EVENT, { type: 'audio', data: voiceBlob })
+    if (this.state.connection) {
+      this.state.connection.send(newMessage)
     }
   }
 
-  callPeer() {
-    navigator.getUserMedia({ video: true, audio: true }, stream => {
-      //playing local video
-      this.localVideoRef.srcObject = stream
-      this.localVideoRef.play()
-    },
-      err => console.error(err))
+  handleTalkButton = () => {
+    if (!this.setState.recordVoice) {
+      this.setState({ recordVoice: true })
+    }
   }
 
+  handleVoice = voiceBlob => {
+
+  }
 
   render() {
-    const { userToChat, roomName } = this.props
+    const { userToChat } = this.props
     return (
       <div>
         <ChatWidget handleNewUserMessage={this.handleNewUserMessage}
           title="Chat"
-          subtitle={`Chatting with user ${userToChat} on room ${roomName}`}
+          subtitle={`Chatting with user ${userToChat}`}
           profileAvatar={logo}
         />
 
@@ -87,18 +95,12 @@ class ChatBox extends Component {
   }
 }
 
-const ChatBoxWithSocket = props => (
-  <SocketContext.Consumer>
-    {socket => <ChatBox {...props} socket={socket} />}
-  </SocketContext.Consumer>
-)
-
 const mapStateToProps = state => {
   return {
     userToChat: state.userToChat,
-    roomName: state.roomName,
-    userNick: state.userNick
+    userNick: state.userNick,
+    socket: state.socket
   }
 }
 
-export default connect(mapStateToProps)(ChatBoxWithSocket)
+export default connect(mapStateToProps)(ChatBox)

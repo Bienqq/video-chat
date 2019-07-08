@@ -1,8 +1,25 @@
 {
-  "name": "another-weatherapp",
+  "name": "video-chat-client",
   "version": "0.1.0",
-  "homepage": "https://skotee.github.io/Another-WeatherApp/",
-  "private": true,
+  "description": "Application for video chatting with sharing files functionality",
+  "homepage": "https://github.com/Bienqq/video-chat#readme",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bienqq/video-chat.git"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "keywords": [
+    "video",
+    "chat"
+  ],
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
@@ -28,14 +45,6 @@
     "sweetalert2": "^8.10.7",
     "typeface-roboto": "0.0.54",
     "vue-notification": "^1.3.16"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"

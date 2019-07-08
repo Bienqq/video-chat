@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { connect } from 'react-redux'
-import { provideNick } from '../../actions/actions'
+import {nickProvided } from '../../actions/actions'
 
 class WelcomeDialog extends Component {
 
@@ -16,7 +16,7 @@ class WelcomeDialog extends Component {
         nick: '',
     }
 
-    buttonClicked = () => {
+    onButtonClicked = () => {
         this.setState({ open: false })
         this.props.onNickProvided(this.state.nick)
     }
@@ -48,7 +48,7 @@ class WelcomeDialog extends Component {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.buttonClicked} color="primary">Enter Chat</Button>
+                    <Button onClick={this.onButtonClicked} color="primary">Enter Chat</Button>
                 </DialogActions>
             </Dialog>
         )
@@ -57,7 +57,7 @@ class WelcomeDialog extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onNickProvided: nick => dispatch(provideNick(nick)) 
+        onNickProvided: userNick => dispatch(nickProvided(userNick))
     }
 }
 
