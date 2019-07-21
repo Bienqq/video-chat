@@ -10,7 +10,7 @@ const io = require('socket.io')(socketServer)
 
 // init P2P broker server
 const PeerServer = require('peer').PeerServer;
-const peerjsServer = PeerServer({ port: process.env.PEER_SERVER_PORT, path: process.env.PATH, proxied: true })
+const peerjsServer = PeerServer({ port: process.env.PEER_SERVER_PORT, path: process.env.PATH_PEER, proxied: true })
 peerjsServer.on('connection', client => {
 	console.log(`Client ${client} connected to broker server`)
 	// console.log(server._clients)
