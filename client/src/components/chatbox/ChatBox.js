@@ -94,7 +94,7 @@ class ChatBox extends Component {
         this.setState({ localMediaStream: mediaStream })
         // just displaying media stream locally
         this.localVideoRef.srcObject = mediaStream
-        
+
         this.state.peer.call(this.props.userToChat, mediaStream)
       }, error => {
         console.error(error)
@@ -111,10 +111,12 @@ class ChatBox extends Component {
           profileAvatar={logo}
         />
         <Buttons onTalkButtonClicked={this.handleMediaButton} />
-        <video autoPlay={true} ref={localVideoRef => { this.localVideoRef = localVideoRef }} muted />
 
-        <br /><br /><br />
-        <video autoPlay={true} ref={remoteVideoRef => { this.remoteVideoRef = remoteVideoRef }} />
+        <h3 className={"local-video-label"}>Local video:</h3>
+        <video className={"local-video"} autoPlay={true} ref={localVideoRef => { this.localVideoRef = localVideoRef }} muted />
+
+        <h3 className={"remote-video-label"}>Remote video: </h3>
+        <video className={"remote-video"} autoPlay={true} ref={remoteVideoRef => { this.remoteVideoRef = remoteVideoRef }} />
 
       </div>
     )

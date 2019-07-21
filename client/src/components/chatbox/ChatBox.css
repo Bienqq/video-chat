@@ -1,4 +1,5 @@
-.rcw-launcher, .rcw-send {
+.rcw-launcher,
+.rcw-send {
     cursor: pointer;
 }
 
@@ -6,6 +7,32 @@
     visibility: hidden;
 }
 
-video {
-    z-index: 1000;
+.local-video {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    right: 18vw;
+    top: 4vw;
+    margin-bottom: 2vw
 }
+
+.remote-video {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    right: 18vw;
+    top: 30vw;
+}
+
+.local-video-label{
+    position: absolute;
+    right: 36vw;
+    top: 3vw;
+}
+
+.remote-video-label{
+    position: absolute;
+    right: 34vw;
+    top: 29vw;
+}
+
