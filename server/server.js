@@ -54,7 +54,7 @@ dns.lookup(os.hostname(), (error, address, fam) => {
 		console.log('-------------------APLICATION STARTED-------------------')
 		console.log(`Hostname : ${os.hostname()}`)
 		console.log(`IP : ${address}`)
-		const peerJsServerAddress = `http://${address}:${process.env.PEER_SERVER_PORT}${process.env.PATH}`
+		const peerJsServerAddress = `http://${address}:${process.env.PEER_SERVER_PORT}${process.env.PATH_PEER}`
 		const socketServerAddress = `http://${address}:${process.env.SOCKET_SERVER_PORT}`
 		console.log(`P2P Broker server is listening at : ${peerJsServerAddress}`)
 		socketServer.listen(process.env.SOCKET_SERVER_PORT, () => {
