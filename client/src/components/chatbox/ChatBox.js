@@ -5,7 +5,6 @@ import Peer from 'peerjs'
 import { START_PEER_CONNECTION } from '../../constants/eventTypes'
 
 import Buttons from '../widgets/Buttons'
-import { ReactMic } from 'react-mic'
 
 import "./ChatBox.css"
 import 'react-chat-widget/lib/styles.css'
@@ -17,7 +16,9 @@ class ChatBox extends Component {
 
   constructor(props) {
     super(props)
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia
     this.localVideoRef = React.createRef()
+    this.remoteVideoRef = React.createRef()
     this.state.peer = new Peer(this.props.userNick, {
       host: process.env.REACT_APP_PEERJS_HOST,
       port: process.env.REACT_APP_PEERJS_PORT,
@@ -28,15 +29,18 @@ class ChatBox extends Component {
   }
 
   state = {
-    recordVoice: false,
+    mediaStreaming: false,
     connection: null,
-    peer: null
+    peer: null,
+    localMediaStream: null,
   }
 
   componentWillReceiveProps({ userToChat, role, socket }) {
     //user who accept invitation is a receiver and wait for connection
     if (role === 'receiver') {
+      // when receiveing start peer connection event init peer
       socket.on(START_PEER_CONNECTION, () => {
+        // receiving text messages
         this.state.peer.on('connection', peerConnection => {
           peerConnection.on('data', this.handleIncomingMessage)
           this.setState({ connection: peerConnection })
@@ -44,15 +48,23 @@ class ChatBox extends Component {
       })
     } else {
       this.setState({ connection: this.state.peer.connect(userToChat) }, () => {
+        // sending text messages
         const connection = this.state.connection
         connection.on('data', this.handleIncomingMessage)
       })
     }
+
+    // receiving media stream
+    this.state.peer.on('call', call => {
+      call.answer(null)
+      call.on('stream', remoteMediaStream => {
+        this.remoteVideoRef.srcObject = remoteMediaStream
+      })
+    })
+
   }
 
-  componentDidMount() {
-  }
-
+  // handling peer event here
   handleIncomingMessage = message => {
     addResponseMessage(message)
   }
@@ -63,14 +75,30 @@ class ChatBox extends Component {
     }
   }
 
-  handleTalkButton = () => {
-    if (!this.setState.recordVoice) {
-      this.setState({ recordVoice: true })
+  handleMediaButton = () => {
+    if (!this.state.mediaStreaming) {
+      this.setState({ mediaStreaming: true })
+      this.startMediaStreaming()
+    } else {
+      // stopping sending our local media stream
+      this.localVideoRef.pause()
+      this.localVideoRef.src = ''
+      this.state.localMediaStream.getTracks().forEach(track => track.stop())
+      this.setState({ mediaStreaming: false })
     }
   }
 
-  handleVoice = voiceBlob => {
-
+  startMediaStreaming = () => {
+    navigator.getUserMedia({ video: true, audio: true },
+      mediaStream => {
+        this.setState({ localMediaStream: mediaStream })
+        // just displaying media stream locally
+        this.localVideoRef.srcObject = mediaStream
+        
+        this.state.peer.call(this.props.userToChat, mediaStream)
+      }, error => {
+        console.error(error)
+      })
   }
 
   render() {
@@ -82,14 +110,12 @@ class ChatBox extends Component {
           subtitle={`Chatting with user ${userToChat}`}
           profileAvatar={logo}
         />
+        <Buttons onTalkButtonClicked={this.handleMediaButton} />
+        <video autoPlay={true} ref={localVideoRef => { this.localVideoRef = localVideoRef }} muted />
 
-        <ReactMic
-          record={this.state.recordVoice}
-          onData={this.handleVoice}
-          audioBitsPerSecond={128000}
-        />
-        <Buttons onTalkButtonClicked={this.handleTalkButton} />
-        <video ref={localVideoRef => { this.localVideoRef = localVideoRef }} muted />
+        <br /><br /><br />
+        <video autoPlay={true} ref={remoteVideoRef => { this.remoteVideoRef = remoteVideoRef }} />
+
       </div>
     )
   }

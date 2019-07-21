@@ -37,9 +37,11 @@ class App extends Component {
       showCancelButton: false,
       confirmButtonText: 'OK'
     }).then(() => {
-      this.setState({ showChatBox: true, role: 'sender' })
-      this.props.onUserToChatSelected(userToChat)
-      this.props.socket.emit(START_PEER_CONNECTION, userToChat)
+      if (invitationAnswer) {
+        this.setState({ showChatBox: true, role: 'sender' })
+        this.props.onUserToChatSelected(userToChat)
+        this.props.socket.emit(START_PEER_CONNECTION, userToChat)
+      }
     })
   }
 
@@ -51,7 +53,8 @@ class App extends Component {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Chat'
+      confirmButtonText: 'Accept',
+      cancelButtonText: 'Reject'
     }).then(result => {
       if (result.value) {
         this.setState({ showChatBox: true, role: 'receiver' })
@@ -86,7 +89,7 @@ class App extends Component {
       contactList = <ContactList socket={this.props.socket} userSelected={this.handleUserToChatSelected} />
     }
     if (this.state.showChatBox) {
-      messageBox = <ChatBox role={this.state.role}/>
+      messageBox = <ChatBox role={this.state.role} />
     }
 
     return (

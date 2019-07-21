@@ -5,3 +5,7 @@
 .hide {
     visibility: hidden;
 }
+
+video {
+    z-index: 1000;
+}
