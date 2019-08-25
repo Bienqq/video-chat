@@ -17,7 +17,6 @@ class ChatBox extends Component {
   constructor(props) {
     super(props)
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia
-    console.log(navigator)
     this.localVideoRef = React.createRef()
     this.remoteVideoRef = React.createRef()
     this.state.peer = new Peer(this.props.userNick, {
