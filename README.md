@@ -1,32 +1,29 @@
 # Video Chat
 Application for video chatting with sharing files functionality
 
-
-
-
 ## How to run
-
-```sh
-npm install # Install required dependencies
-```
 
 ### Node.js server
 
 In /server directory run below commands:
 
 ```sh
+npm install # Install required dependencies
 npm run dev # In development mode using Nodemon
-npm run start # in production mode
+npm run start # In production mode
 ```
 
 ### React client app
 In /client directory run below commands:
+
 ```sh
+npm install # Install required dependencies
 npm run start
 ```
 
 Also create .env.local file with local React client app configuration
-example:
+
+**Example:**
 
 ```
 # React App port
