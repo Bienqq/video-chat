@@ -22,8 +22,9 @@ class ChatBox extends Component {
     this.state.peer = new Peer(this.props.userNick, {
       host: process.env.REACT_APP_PEERJS_HOST,
       path: process.env.REACT_APP_PEERJS_PATH,
+      port: process.env.REACT_APP_PEERJS_PORT,
       debug: 1,
-      secure: true
+      secure: process.env.REACT_APP_PEERJS_SECURE === 'true'
     })
   }
 
@@ -48,8 +49,7 @@ class ChatBox extends Component {
     } else {
       this.setState({ connection: this.state.peer.connect(userToChat) }, () => {
         // sending text messages
-        const connection = this.state.connection
-        connection.on('data', this.handleIncomingMessage)
+        this.state.connection.on('data', this.handleIncomingMessage)
       })
     }
 
