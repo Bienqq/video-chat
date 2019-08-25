@@ -7,6 +7,7 @@ dist/
 npm-debug.log
 yarn-error.log
 nodemon.json
+.vscode
 
 # local env files
 .env.local
