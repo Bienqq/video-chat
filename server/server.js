@@ -6,6 +6,7 @@ const app = require('express')()
 
 // init socket.IO server
 const socketServer = require('http').createServer(app)
+
 const io = require('socket.io')(socketServer)
 
 // init P2P broker server

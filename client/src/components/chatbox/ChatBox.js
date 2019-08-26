@@ -45,6 +45,7 @@ class ChatBox extends Component {
           peerConnection.on('data', this.handleIncomingMessage)
           this.setState({ connection: peerConnection })
         })
+
       })
     } else {
       this.setState({ connection: this.state.peer.connect(userToChat) }, () => {
@@ -65,6 +66,7 @@ class ChatBox extends Component {
 
   // handling peer event here
   handleIncomingMessage = message => {
+    console.log("handleIncomingMessage invoced")
     addResponseMessage(message)
   }
 
