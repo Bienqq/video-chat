@@ -22,7 +22,7 @@ class ChatBox extends Component {
     this.state.peer = new Peer(this.props.userNick, {
       host: process.env.REACT_APP_PEERJS_HOST,
       path: process.env.REACT_APP_PEERJS_PATH,
-      port: process.env.REACT_APP_PEERJS_PORT,
+      port: process.env.REACT_APP_PEERJS_PORT === undefined ? 443 : process.env.REACT_APP_PEERJS_PORT,
       debug: 1,
       secure: process.env.REACT_APP_PEERJS_SECURE === 'true'
     })
