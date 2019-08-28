@@ -41,15 +41,18 @@ class ChatBox extends Component {
       // when receiveing start peer connection event init peer
       socket.on(START_PEER_CONNECTION, () => {
         // receiving text messages
+        console.log('receiver will react on connection')
         this.state.peer.on('connection', peerConnection => {
           peerConnection.on('data', this.handleIncomingMessage)
           this.setState({ connection: peerConnection })
+          console.log('receiver will react on data event')
         })
 
       })
     } else {
       this.setState({ connection: this.state.peer.connect(userToChat) }, () => {
         // sending text messages
+        console.log('sender will connect')
         this.state.connection.on('data', this.handleIncomingMessage)
       })
     }
@@ -66,12 +69,13 @@ class ChatBox extends Component {
 
   // handling peer event here
   handleIncomingMessage = message => {
-    console.log("handleIncomingMessage invoced")
+    console.log('handleIncomingMessage Invoked')
     addResponseMessage(message)
   }
 
   handleNewUserMessage = newMessage => {
     if (this.state.connection) {
+      console.log('handle new user message')
       this.state.connection.send(newMessage)
     }
   }

@@ -14,7 +14,6 @@ const PeerServer = require('peer').PeerServer;
 const peerjsServer = PeerServer({ port: process.env.PEER_SERVER_PORT, path: process.env.PATH_PEER, proxied: true })
 peerjsServer.on('connection', client => {
 	console.log(`Client ${client} connected to broker server`)
-	// console.log(server._clients)
 })
 
 const allUsers = []
