@@ -43,9 +43,6 @@ REACT_APP_BROKER_URL="localhost:8992"
 # Authors
 
 - Tomasz Bieniek 
-- Kinga Humeniuk
-- Judyta Szczęch
-- Radosław Wojaczek
 
 # Licence
 MIT 
